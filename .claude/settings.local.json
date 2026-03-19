@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"/Users/ohyeah/Documents/money printing machine/SheetBirdgeX\" && npm run build 2>&1 | head -80)",
+      "Bash(cd \"/Users/ohyeah/Documents/money printing machine/SheetBirdgeX\" && rm -rf node_modules && npm install 2>&1 | tail -10)",
+      "Bash(cd \"/Users/ohyeah/Documents/money printing machine/SheetBirdgeX\" && npm run build 2>&1 | tail -60)",
+      "Bash(# Copy everything from SheetBridgeX into SheetBirdgeX \\(the real project\\)\ncp -rn \"/Users/ohyeah/Documents/money printing machine/SheetBridgeX/.\" \"/Users/ohyeah/Documents/money printing machine/SheetBirdgeX/\" 2>&1 | head -20\necho \"Done\")",
+      "Bash(cd \"/Users/ohyeah/Documents/money printing machine/SheetBirdgeX\" && npm run build 2>&1 | tail -50)",
+      "Bash(curl -si https://mcp.notion.com/mcp -X POST -H \"Content-Type: application/json\" -d '{\"jsonrpc\":\"2.0\",\"method\":\"initialize\",\"id\":1}' 2>&1 | head -30)",
+      "Bash(claude mcp:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__type_text",
+      "mcp__chrome-devtools__press_key",
+      "mcp__chrome-devtools__fill",
+      "Bash(ls ~/Downloads/client_secret_*.json 2>/dev/null | head -1)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__new_page",
+      "mcp__github__create_repository"
+    ]
+  }
+}
