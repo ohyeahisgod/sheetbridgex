@@ -12,8 +12,12 @@ import {
   AlertCircle,
   CheckCircle2,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
 
@@ -34,15 +38,26 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link href="/login" className="hidden sm:block text-[14px] text-gray-500 hover:text-gray-900 transition-colors">
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Start Free <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Go to dashboard <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="hidden sm:block text-[14px] text-gray-500 hover:text-gray-900 transition-colors">
+                  Sign in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                >
+                  Start Free <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
