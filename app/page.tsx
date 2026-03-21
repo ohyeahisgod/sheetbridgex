@@ -605,8 +605,8 @@ export default async function Home() {
           </Link>
           <p className="mt-5 text-[12px] text-gray-600">
             No credit card required · Free plan available ·{' '}
-            <a href="mailto:support@satosushi.co" className="underline underline-offset-2 hover:text-gray-400 transition-colors">
-              support@satosushi.co
+            <a href="mailto:hello@satosushi.co" className="underline underline-offset-2 hover:text-gray-400 transition-colors">
+              Questions? hello@satosushi.co
             </a>
           </p>
         </div>
@@ -657,10 +657,10 @@ export default async function Home() {
                 <p className="text-[11px] font-bold text-gray-900 uppercase tracking-widest mb-4">Support</p>
                 <div className="space-y-2.5">
                   <a
-                    href="mailto:support@satosushi.co"
+                    href="mailto:hello@satosushi.co"
                     className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors"
                   >
-                    support@satosushi.co
+                    hello@satosushi.co
                   </a>
                 </div>
               </div>
