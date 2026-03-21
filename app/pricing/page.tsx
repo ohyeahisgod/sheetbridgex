@@ -1,26 +1,40 @@
-import { CheckCircle, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { PricingCards } from './pricing-cards'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
   title: 'Pricing — SheetBridgeX',
   description: 'Simple, transparent pricing. Start free, upgrade when you need more.',
 }
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
       <nav className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-lg font-bold text-gray-900">SheetBridgeX</Link>
         <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">Sign in</Link>
-          <Link
-            href="/login"
-            className="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            Get started free
-          </Link>
+          {user ? (
+            <Link
+              href="/dashboard"
+              className="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Go to dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">Sign in</Link>
+              <Link
+                href="/login"
+                className="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Get started free
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
