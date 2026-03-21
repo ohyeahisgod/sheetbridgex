@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   ].filter(Boolean).join('\n')
 
   const { error } = await resend.emails.send({
-    from: 'SheetBridgeX Support <onboarding@resend.dev>',
+    from: 'SheetBridgeX Support <support@satosushi.co>',
     to: 'support@satosushi.co',
     replyTo: userEmail !== 'anonymous' ? userEmail : undefined,
     subject: `[SheetBridgeX Support] ${issueLabel}`,
