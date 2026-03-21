@@ -1,57 +1,63 @@
 import { createClient } from '@/lib/supabase/server'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
-import { SyncJobCard } from '@/components/dashboard/sync-job-card'
+import { getLimits, currentMonth } from '@/lib/billing/plans'
 import { SyncJob } from '@/lib/types'
+import { PlanBanner } from '@/components/dashboard/plan-banner'
+import { DashboardShell } from '@/components/dashboard/dashboard-shell'
+import { CheckCircle } from 'lucide-react'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const params = await searchParams
 
-  const { data: jobs } = await supabase
-    .from('sync_jobs')
-    .select('*')
-    .eq('user_id', user!.id)
-    .order('created_at', { ascending: false })
+  const [
+    { data: jobs },
+    { data: userData },
+    { count: connections },
+    { data: usage },
+  ] = await Promise.all([
+    supabase.from('sync_jobs').select('*').eq('user_id', user!.id).order('created_at', { ascending: false }),
+    supabase.from('users').select('plan').eq('id', user!.id).single(),
+    supabase.from('sync_jobs').select('*', { count: 'exact', head: true }).eq('user_id', user!.id),
+    supabase.from('usage_monthly').select('rows_processed').eq('user_id', user!.id).eq('month', currentMonth()).single(),
+  ])
+
+  const plan = userData?.plan ?? 'free'
+  const limits = getLimits(plan)
+  const connectionsUsed = connections ?? 0
+  const rowsProcessed = usage?.rows_processed ?? 0
 
   return (
     <div className="px-8 py-8 max-w-5xl">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Syncs</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage your Notion → Google Sheets sync jobs</p>
-        </div>
-        <Link
-          href="/dashboard/create"
-          className="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New sync
-        </Link>
-      </div>
 
-      {!jobs || jobs.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
-          <div className="w-12 h-12 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Plus className="w-5 h-5 text-gray-400" />
-          </div>
-          <h3 className="font-semibold text-gray-900 mb-1">No syncs yet</h3>
-          <p className="text-sm text-gray-500 mb-6">Create your first sync to start moving data from Notion to Google Sheets.</p>
-          <Link
-            href="/dashboard/create"
-            className="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Create sync
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {(jobs as SyncJob[]).map((job) => (
-            <SyncJobCard key={job.id} job={job} />
-          ))}
+      {/* Post-checkout success toast */}
+      {params?.success === 'true' && (
+        <div className="mb-6 flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 font-medium">
+          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+          Plan upgraded successfully — your new limits are now active.
         </div>
       )}
+
+      {/* Plan & Usage Banner */}
+      <PlanBanner
+        plan={plan}
+        limits={limits}
+        connectionsUsed={connectionsUsed}
+        rowsProcessed={rowsProcessed}
+      />
+
+      {/* Sync list with interactive header + upgrade modal */}
+      <DashboardShell
+        jobs={(jobs ?? []) as SyncJob[]}
+        plan={plan}
+        limits={limits}
+        connectionsUsed={connectionsUsed}
+      />
+
     </div>
   )
 }
