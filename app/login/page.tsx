@@ -1,18 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam === 'auth_callback_failed') {
+      setError('This link has expired or is no longer valid. Please request a new one.')
+    }
+  }, [searchParams])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,7 +31,11 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setError(error.message)
+      if (error.message.includes('Invalid login credentials')) {
+        setError('Incorrect email or password.')
+      } else {
+        setError(error.message)
+      }
       setLoading(false)
     } else {
       router.push('/dashboard')
@@ -55,14 +67,24 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Input
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div>
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <div className="mt-1.5 text-right">
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            </div>
             {error && (
               <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                 {error}
@@ -82,5 +104,17 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }

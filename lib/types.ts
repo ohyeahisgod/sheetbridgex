@@ -1,5 +1,7 @@
 export type Plan = 'free' | 'pro'
 
+export type SyncDirection = 'notion_to_sheets' | 'sheets_to_notion' | 'bidirectional'
+
 export interface User {
   id: string
   email: string
@@ -23,6 +25,7 @@ export interface SyncJob {
   interval_minutes: number
   last_synced_at: string | null
   status: 'active' | 'error' | 'paused'
+  sync_direction: SyncDirection
   created_at: string
 }
 
@@ -30,6 +33,22 @@ export interface FieldMapping {
   notion_field: string
   sheet_column: string
   notion_type: string
+  /** Per-field sync direction; defaults to the job-level direction */
+  field_direction?: SyncDirection
+}
+
+export interface SyncRowState {
+  id: string
+  sync_job_id: string
+  notion_page_id: string
+  sheet_row_index: number
+  notion_hash: string | null
+  sheet_hash: string | null
+  notion_last_modified: string | null
+  sheet_last_modified: string | null
+  status: 'synced' | 'conflict' | 'pending'
+  created_at: string
+  updated_at: string
 }
 
 export interface SyncLog {

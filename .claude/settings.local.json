@@ -19,7 +19,18 @@
       "Bash(ls ~/Downloads/client_secret_*.json 2>/dev/null | head -1)",
       "mcp__chrome-devtools__list_pages",
       "mcp__chrome-devtools__new_page",
-      "mcp__github__create_repository"
+      "mcp__github__create_repository",
+      "Bash(vercel whoami:*)",
+      "Bash(npm run:*)",
+      "Bash(vercel --yes --confirm)",
+      "Bash(vercel --yes --name sheetbridgex)",
+      "Bash(vercel --yes)",
+      "Bash(vercel dns:*)",
+      "Bash(vercel inspect:*)",
+      "mcp__cloudflare__zones_list",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__execute_sql"
     ]
   }
 }

@@ -1,13 +1,19 @@
 import { NotionDatabase, NotionProperty } from '@/lib/types'
 
+const NOTION_VERSION = '2022-06-28'
+
+function notionHeaders(accessToken: string) {
+  return {
+    Authorization: `Bearer ${accessToken}`,
+    'Notion-Version': NOTION_VERSION,
+    'Content-Type': 'application/json',
+  }
+}
+
 export async function getNotionDatabases(accessToken: string): Promise<NotionDatabase[]> {
   const res = await fetch('https://api.notion.com/v1/search', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Notion-Version': '2022-06-28',
-      'Content-Type': 'application/json',
-    },
+    headers: notionHeaders(accessToken),
     body: JSON.stringify({
       filter: { value: 'database', property: 'object' },
       sort: { direction: 'descending', timestamp: 'last_edited_time' },
@@ -26,10 +32,7 @@ export async function getNotionDatabases(accessToken: string): Promise<NotionDat
 
 export async function getNotionDatabase(accessToken: string, dbId: string): Promise<NotionDatabase> {
   const res = await fetch(`https://api.notion.com/v1/databases/${dbId}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Notion-Version': '2022-06-28',
-    },
+    headers: notionHeaders(accessToken),
   })
 
   if (!res.ok) throw new Error('Failed to fetch Notion database')
@@ -60,11 +63,7 @@ export async function fetchNotionRows(accessToken: string, dbId: string): Promis
 
     const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      },
+      headers: notionHeaders(accessToken),
       body: JSON.stringify(body),
     })
 
@@ -81,8 +80,11 @@ export async function fetchNotionRows(accessToken: string, dbId: string): Promis
   return rows
 }
 
-function flattenNotionPage(page: any): Record<string, any> {
-  const flat: Record<string, any> = { _id: page.id }
+export function flattenNotionPage(page: any): Record<string, any> {
+  const flat: Record<string, any> = {
+    _id: page.id,
+    _last_edited_time: page.last_edited_time,
+  }
   for (const [key, prop] of Object.entries<any>(page.properties)) {
     flat[key] = extractPropertyValue(prop)
   }
@@ -127,5 +129,114 @@ function extractPropertyValue(prop: any): any {
       return prop.status?.name || ''
     default:
       return ''
+  }
+}
+
+/** Types that can be written back to Notion from sheet values */
+const WRITABLE_TYPES = new Set([
+  'title', 'rich_text', 'number', 'select', 'multi_select',
+  'date', 'checkbox', 'url', 'email', 'phone_number', 'status',
+])
+
+export function isWritableNotionType(type: string): boolean {
+  return WRITABLE_TYPES.has(type)
+}
+
+function buildNotionProperty(type: string, value: string): any {
+  const v = String(value ?? '')
+  switch (type) {
+    case 'title':
+      return { title: [{ text: { content: v } }] }
+    case 'rich_text':
+      return { rich_text: [{ text: { content: v } }] }
+    case 'number': {
+      const n = parseFloat(v)
+      return { number: isNaN(n) ? null : n }
+    }
+    case 'select':
+      return { select: v ? { name: v } : null }
+    case 'multi_select':
+      return {
+        multi_select: v.split(',').map(s => s.trim()).filter(Boolean).map(name => ({ name })),
+      }
+    case 'date':
+      return { date: v ? { start: v } : null }
+    case 'checkbox':
+      return { checkbox: v === 'Yes' || v === 'true' || v === '1' }
+    case 'url':
+      return { url: v || null }
+    case 'email':
+      return { email: v || null }
+    case 'phone_number':
+      return { phone_number: v || null }
+    case 'status':
+      return { status: v ? { name: v } : null }
+    default:
+      return null
+  }
+}
+
+/**
+ * Create a new page in a Notion database.
+ * fields: { [notionFieldName]: { type, value } }
+ * Returns the new page ID.
+ */
+export async function createNotionPage(
+  accessToken: string,
+  dbId: string,
+  fields: Record<string, { type: string; value: string }>
+): Promise<string> {
+  const properties: Record<string, any> = {}
+  for (const [fieldName, { type, value }] of Object.entries(fields)) {
+    if (!isWritableNotionType(type)) continue
+    const prop = buildNotionProperty(type, value)
+    if (prop !== null) properties[fieldName] = prop
+  }
+
+  const res = await fetch('https://api.notion.com/v1/pages', {
+    method: 'POST',
+    headers: notionHeaders(accessToken),
+    body: JSON.stringify({
+      parent: { database_id: dbId },
+      properties,
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Failed to create Notion page: ${err}`)
+  }
+
+  const page = await res.json()
+  return page.id
+}
+
+/**
+ * Update an existing Notion page's properties.
+ * fields: { [notionFieldName]: { type, value } }
+ */
+export async function updateNotionPage(
+  accessToken: string,
+  pageId: string,
+  fields: Record<string, { type: string; value: string }>
+): Promise<void> {
+  const properties: Record<string, any> = {}
+  for (const [fieldName, { type, value }] of Object.entries(fields)) {
+    if (!isWritableNotionType(type)) continue
+    const prop = buildNotionProperty(type, value)
+    if (prop !== null) properties[fieldName] = prop
+  }
+
+  if (Object.keys(properties).length === 0) return
+
+  const res = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
+    method: 'PATCH',
+    headers: notionHeaders(accessToken),
+    body: JSON.stringify({ properties }),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Failed to update Notion page ${pageId}: ${err}`)
   }
 }

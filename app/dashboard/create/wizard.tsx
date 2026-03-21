@@ -6,15 +6,16 @@ import { Check, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { NotionDatabase, GoogleSheet, FieldMapping } from '@/lib/types'
+import { NotionDatabase, GoogleSheet, FieldMapping, SyncDirection } from '@/lib/types'
 
-type Step = 'notion' | 'database' | 'sheets' | 'mapping' | 'schedule'
+type Step = 'notion' | 'database' | 'sheets' | 'mapping' | 'direction' | 'schedule'
 
 const STEPS: { id: Step; label: string }[] = [
   { id: 'notion', label: 'Connect Notion' },
   { id: 'database', label: 'Select database' },
   { id: 'sheets', label: 'Connect Sheets' },
   { id: 'mapping', label: 'Map fields' },
+  { id: 'direction', label: 'Sync direction' },
   { id: 'schedule', label: 'Schedule' },
 ]
 
@@ -34,6 +35,7 @@ export function CreateSyncWizard({
   const [sheets, setSheets] = useState<GoogleSheet[]>([])
   const [selectedSheet, setSelectedSheet] = useState<GoogleSheet | null>(null)
   const [mapping, setMapping] = useState<FieldMapping[]>([])
+  const [syncDirection, setSyncDirection] = useState<SyncDirection>('notion_to_sheets')
   const [syncName, setSyncName] = useState('')
   const [interval, setInterval] = useState(30)
   const [loading, setLoading] = useState(false)
@@ -99,6 +101,7 @@ export function CreateSyncWizard({
           google_sheet_id: selectedSheet.id,
           google_sheet_name: selectedSheet.name,
           mapping_json: mapping.filter(m => m.sheet_column.trim()),
+          sync_direction: syncDirection,
           interval_minutes: interval,
         }),
       })
@@ -276,6 +279,50 @@ export function CreateSyncWizard({
                   placeholder="Skip field"
                 />
               </div>
+            ))}
+          </div>
+          <Button onClick={() => setStep('direction')}>Continue</Button>
+        </div>
+      )}
+
+      {/* Step: Direction */}
+      {step === 'direction' && (
+        <div className="bg-white border border-gray-200 rounded-xl p-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sync direction</h2>
+          <p className="text-sm text-gray-500 mb-6">
+            Choose how data flows between Notion and Google Sheets.
+          </p>
+          <div className="space-y-3 mb-6">
+            {[
+              {
+                value: 'notion_to_sheets' as SyncDirection,
+                label: 'Notion → Sheets',
+                description: 'Data flows one-way from Notion into your spreadsheet.',
+              },
+              {
+                value: 'sheets_to_notion' as SyncDirection,
+                label: 'Sheets → Notion',
+                description: 'Changes made in the spreadsheet are pushed back to Notion.',
+              },
+              {
+                value: 'bidirectional' as SyncDirection,
+                label: 'Bidirectional (2-way)',
+                description: 'Changes on either side are synced to the other. Notion wins on conflict.',
+              },
+            ].map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => setSyncDirection(opt.value)}
+                className={cn(
+                  'w-full text-left border rounded-lg px-4 py-3 text-sm transition-colors',
+                  syncDirection === opt.value
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                )}
+              >
+                <p className="font-medium text-gray-900">{opt.label}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{opt.description}</p>
+              </button>
             ))}
           </div>
           <Button onClick={() => setStep('schedule')}>Continue</Button>
