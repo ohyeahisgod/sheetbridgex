@@ -33,7 +33,7 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     bidirectional_sync: false,
     max_sync_runs_per_month: -1,
     price_monthly_cents: 900,
-    stripe_price_id: process.env.STRIPE_STARTER_PRICE_ID ?? 'price_1TDM7VK2tJCSMrjQjAtHKRKA',
+    stripe_price_id: process.env.STRIPE_STARTER_PRICE_ID ?? 'price_1TDNhPGfOC22jA4iEvo6dWMf',
   },
   pro: {
     plan: 'pro',
@@ -44,7 +44,7 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     bidirectional_sync: true,
     max_sync_runs_per_month: -1,
     price_monthly_cents: 1900,
-    stripe_price_id: process.env.STRIPE_PRO_PRICE_ID ?? 'price_1TDM7YK2tJCSMrjQs0EBh0I3',
+    stripe_price_id: process.env.STRIPE_PRO_PRICE_ID ?? 'price_1TDNhRGfOC22jA4iqvFaLGi5',
   },
   business: {
     plan: 'business',
@@ -55,7 +55,7 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     bidirectional_sync: true,
     max_sync_runs_per_month: -1,
     price_monthly_cents: 4900,
-    stripe_price_id: process.env.STRIPE_BUSINESS_PRICE_ID ?? 'price_1TDM7aK2tJCSMrjQZox0c8yR',
+    stripe_price_id: process.env.STRIPE_BUSINESS_PRICE_ID ?? 'price_1TDNhSGfOC22jA4i5LKK2iNg',
   },
 }
 
