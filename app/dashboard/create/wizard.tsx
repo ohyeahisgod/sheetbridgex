@@ -184,23 +184,32 @@ export function CreateSyncWizard({
           {databases.length === 0 ? (
             <Button onClick={loadDatabases} loading={loading}>Load databases</Button>
           ) : (
-            <div className="space-y-2 mb-6">
-              {databases.map((db) => (
-                <button
-                  key={db.id}
-                  onClick={() => selectDatabase(db)}
-                  className={cn(
-                    'w-full text-left border rounded-lg px-4 py-3 text-sm transition-colors',
-                    selectedDb?.id === db.id
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  )}
-                >
-                  <p className="font-medium text-gray-900">{db.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{Object.keys(db.properties).length} properties</p>
-                </button>
-              ))}
-            </div>
+            <>
+              <div className="space-y-2 mb-4">
+                {databases.map((db) => (
+                  <button
+                    key={db.id}
+                    onClick={() => selectDatabase(db)}
+                    className={cn(
+                      'w-full text-left border rounded-lg px-4 py-3 text-sm transition-colors',
+                      selectedDb?.id === db.id
+                        ? 'border-gray-900 bg-gray-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    )}
+                  >
+                    <p className="font-medium text-gray-900">{db.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{Object.keys(db.properties).length} properties</p>
+                  </button>
+                ))}
+              </div>
+              <div className="mb-6 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-800">
+                找不到某個資料庫？Notion 只會顯示你授權給本應用程式存取的資料庫。
+                請到 <strong>Notion → Settings → Connections → SheetBridgeX → Manage access</strong>，
+                或{' '}
+                <a href="/api/auth/notion" className="underline font-medium">重新連接 Notion</a>{' '}
+                並勾選所有需要的資料庫。
+              </div>
+            </>
           )}
           {selectedDb && (
             <Button onClick={() => { hasGoogle ? loadSheets() : setStep('sheets') }} loading={loading}>
