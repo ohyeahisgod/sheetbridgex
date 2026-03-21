@@ -3,7 +3,7 @@ import { getLimits, currentMonth } from '@/lib/billing/plans'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { ArrowRight, Zap, CheckCircle } from 'lucide-react'
+import { ArrowRight, Zap } from 'lucide-react'
 
 function ProgressBar({ value, max }: { value: number; max: number }) {
   const pct = max === -1 ? 0 : Math.min((value / max) * 100, 100)
@@ -24,22 +24,6 @@ function LimitLabel({ value, max }: { value: number; max: number }) {
   )
 }
 
-const PRO_FEATURES = [
-  '10 sync connections',
-  '5,000 rows / month',
-  '5-minute sync interval',
-  'Bidirectional & Sheets→Notion sync',
-  'Priority support',
-]
-
-const BUSINESS_FEATURES = [
-  'Unlimited sync connections',
-  '100,000 rows / month',
-  '1-minute sync interval',
-  'Bidirectional sync',
-  '5 team members',
-  'Priority support',
-]
 
 export default async function UsagePage() {
   const supabase = await createClient()
@@ -146,86 +130,28 @@ export default async function UsagePage() {
         </CardContent>
       </Card>
 
-      {/* Upgrade CTAs */}
-      {plan === 'free' && (
-        <div className="grid grid-cols-2 gap-4">
-          {/* Pro */}
-          <Card className="border-gray-900">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">Pro</h3>
-                <span className="text-sm font-bold text-gray-900">$19/mo</span>
+      {/* Upgrade CTA */}
+      {plan !== 'business' && (
+        <Card className="border-gray-900 bg-gray-900 text-white">
+          <CardContent className="py-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-semibold text-white mb-1">
+                  {plan === 'free' ? 'Upgrade your plan' : 'Upgrade to Business'}
+                </p>
+                <p className="text-sm text-gray-400">
+                  {plan === 'free'
+                    ? 'More connections, faster sync intervals, and bidirectional sync.'
+                    : 'Unlimited connections, 100k rows/month, and 1-minute sync intervals.'}
+                </p>
               </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-1.5 mb-5">
-                {PRO_FEATURES.map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
-                    <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="/api/billing/checkout?plan=pro"
-                className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              <Link
+                href="/pricing"
+                className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-gray-900 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <Zap className="w-4 h-4" /> Upgrade to Pro
-              </a>
-            </CardContent>
-          </Card>
-
-          {/* Business */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">Business</h3>
-                <span className="text-sm font-bold text-gray-900">$49/mo</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-1.5 mb-5">
-                {BUSINESS_FEATURES.map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
-                    <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="/api/billing/checkout?plan=business"
-                className="w-full flex items-center justify-center gap-2 border border-gray-900 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Upgrade to Business
-              </a>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {plan === 'pro' && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Business</h3>
-              <span className="text-sm font-bold text-gray-900">$49/mo</span>
+                <Zap className="w-4 h-4" /> See plans
+              </Link>
             </div>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-1.5 mb-5">
-              {BUSINESS_FEATURES.map(f => (
-                <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
-                  <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <a
-              href="/api/billing/checkout?plan=business"
-              className="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              Upgrade to Business <ArrowRight className="w-4 h-4" />
-            </a>
           </CardContent>
         </Card>
       )}
