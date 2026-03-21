@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { X, Zap, CheckCircle, Lock, ArrowRight } from 'lucide-react'
+import { SupportModal } from '@/components/support/support-modal'
 
 type UpgradeReason = 'connection_limit' | 'bidirectional' | 'row_limit' | 'interval'
 
@@ -47,6 +48,7 @@ interface UpgradeModalProps {
 
 export function UpgradeModal({ reason, onClose }: UpgradeModalProps) {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const [supportOpen, setSupportOpen] = useState(false)
   const info = REASONS[reason]
 
   async function handleUpgrade(planId: string) {
@@ -146,7 +148,13 @@ export function UpgradeModal({ reason, onClose }: UpgradeModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-5 pb-5 text-center">
+        <div className="px-5 pb-5 flex items-center justify-between">
+          <button
+            onClick={() => setSupportOpen(true)}
+            className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
+          >
+            Contact support
+          </button>
           <a
             href="/pricing"
             className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 transition-colors"
@@ -155,6 +163,13 @@ export function UpgradeModal({ reason, onClose }: UpgradeModalProps) {
           </a>
         </div>
       </div>
+
+      {supportOpen && (
+        <SupportModal
+          onClose={() => setSupportOpen(false)}
+          defaultIssueType="billing"
+        />
+      )}
     </div>
   )
 }

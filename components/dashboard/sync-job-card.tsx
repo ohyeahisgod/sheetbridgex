@@ -4,12 +4,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import {
   RefreshCw, ChevronRight, Clock, Pause, Play,
-  ArrowRight, ArrowLeft, ArrowLeftRight, Zap, Lock,
+  ArrowRight, ArrowLeft, ArrowLeftRight, Zap,
 } from 'lucide-react'
 import { SyncJob, SyncDirection } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatRelativeTime } from '@/lib/utils'
+import { SupportModal } from '@/components/support/support-modal'
 
 function DirectionBadge({ direction }: { direction: SyncDirection }) {
   if (direction === 'notion_to_sheets') {
@@ -53,6 +54,7 @@ export function SyncJobCard({
   const [lastSynced, setLastSynced] = useState(job.last_synced_at)
   const [syncError, setSyncError] = useState<string | null>(null)
   const [toggling, setToggling] = useState(false)
+  const [supportOpen, setSupportOpen] = useState(false)
 
   const direction = job.sync_direction || 'notion_to_sheets'
   const isBidirectional = direction !== 'notion_to_sheets'
@@ -126,6 +128,7 @@ export function SyncJobCard({
   }
 
   return (
+    <>
     <div className="bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors">
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
@@ -152,7 +155,15 @@ export function SyncJobCard({
             </div>
 
             {syncError && (
-              <p className="mt-1.5 text-xs text-red-600">{syncError}</p>
+              <div className="mt-1.5 flex items-center gap-2">
+                <p className="text-xs text-red-600">{syncError}</p>
+                <button
+                  onClick={() => setSupportOpen(true)}
+                  className="text-xs text-gray-400 hover:text-gray-700 underline underline-offset-2 transition-colors flex-shrink-0"
+                >
+                  Contact support
+                </button>
+              </div>
             )}
           </div>
 
@@ -208,5 +219,13 @@ export function SyncJobCard({
         </div>
       )}
     </div>
+    {supportOpen && (
+      <SupportModal
+        onClose={() => setSupportOpen(false)}
+        defaultIssueType="sync_error"
+        jobId={job.id}
+      />
+    )}
+    </>
   )
 }

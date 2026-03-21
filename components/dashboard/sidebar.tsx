@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Plus, BarChart2, LogOut, Zap } from 'lucide-react'
+import { LayoutDashboard, Plus, BarChart2, LogOut, Zap, HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
+import { SupportModal } from '@/components/support/support-modal'
 
 interface PlanSummary {
   plan: string
@@ -31,6 +33,7 @@ const PLAN_DOT: Record<string, string> = {
 export function Sidebar({ planSummary }: { planSummary?: PlanSummary }) {
   const pathname = usePathname()
   const router = useRouter()
+  const [supportOpen, setSupportOpen] = useState(false)
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -129,6 +132,17 @@ export function Sidebar({ planSummary }: { planSummary?: PlanSummary }) {
         </div>
       )}
 
+      {/* Help / Support */}
+      <div className="px-3 pb-2">
+        <button
+          onClick={() => setSupportOpen(true)}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors w-full"
+        >
+          <HelpCircle className="w-4 h-4" />
+          Help &amp; Support
+        </button>
+      </div>
+
       {/* Sign out */}
       <div className="px-3 py-3 border-t border-gray-100">
         <button
@@ -139,6 +153,10 @@ export function Sidebar({ planSummary }: { planSummary?: PlanSummary }) {
           Sign out
         </button>
       </div>
+
+      {supportOpen && (
+        <SupportModal onClose={() => setSupportOpen(false)} />
+      )}
     </aside>
   )
 }
