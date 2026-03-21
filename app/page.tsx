@@ -427,73 +427,120 @@ export default async function Home() {
       {/* ─── PRICING ─── */}
       <section id="pricing" className="max-w-6xl mx-auto px-6 py-24">
         <div className="text-center mb-14">
-          <h2 className="text-[32px] font-bold text-gray-900 tracking-tight mb-3">Simple pricing</h2>
+          <h2 className="text-[32px] font-bold text-gray-900 tracking-tight mb-3">Simple, transparent pricing</h2>
           <p className="text-[15px] text-gray-500">
-            Upgrade only when you need more sync capacity.
+            Start free. Upgrade when your data outgrows the free tier.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[680px] mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
           {/* Free */}
-          <div className="rounded-2xl border border-gray-200 p-8">
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-4">Free</p>
+          <div className="rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Free</p>
             <div className="flex items-end gap-1 mb-1">
-              <span className="text-[48px] font-bold text-gray-900 tracking-tight leading-none">$0</span>
-              <span className="text-[14px] text-gray-400 mb-1.5">/month</span>
+              <span className="text-[40px] font-bold text-gray-900 tracking-tight leading-none">$0</span>
+              <span className="text-[13px] text-gray-400 mb-1.5">/mo</span>
             </div>
-            <p className="text-[13px] text-gray-400 mb-8">No credit card required.</p>
-            <ul className="space-y-3 mb-8">
-              {['1 sync job', '30-minute sync interval', 'Manual sync', 'Basic logs'].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-[14px] text-gray-600">
-                  <Check className="w-4 h-4 text-gray-300 flex-shrink-0" />
+            <p className="text-[12px] text-gray-400 mb-6">Try it out — no credit card required.</p>
+            <ul className="space-y-2.5 mb-8 flex-1">
+              {['1 sync connection', '100 rows / month', '30-minute sync interval', 'Notion → Sheets (one-way)', 'Manual sync'].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-[13px] text-gray-600">
+                  <Check className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                   {item}
                 </li>
               ))}
             </ul>
             <Link
               href="/signup"
-              className="block w-full text-center border border-gray-200 text-gray-900 font-medium py-3 rounded-xl hover:bg-gray-50 transition-colors text-[13px]"
+              className="block w-full text-center border border-gray-200 text-gray-900 font-medium py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-[13px]"
             >
-              Get started free
+              Start free
+            </Link>
+          </div>
+
+          {/* Starter */}
+          <div className="rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Starter</p>
+            <div className="flex items-end gap-1 mb-1">
+              <span className="text-[40px] font-bold text-gray-900 tracking-tight leading-none">$9</span>
+              <span className="text-[13px] text-gray-400 mb-1.5">/mo</span>
+            </div>
+            <p className="text-[12px] text-gray-400 mb-6">For individuals who sync regularly.</p>
+            <ul className="space-y-2.5 mb-8 flex-1">
+              {['3 sync connections', '1,000 rows / month', '15-minute sync interval', 'Notion → Sheets (one-way)', 'Email support'].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-[13px] text-gray-600">
+                  <Check className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/pricing"
+              className="block w-full text-center bg-gray-900 text-white font-medium py-2.5 rounded-xl hover:bg-gray-800 transition-colors text-[13px]"
+            >
+              Upgrade to Starter
             </Link>
           </div>
 
           {/* Pro */}
-          <div className="rounded-2xl border-2 border-gray-900 p-8 relative">
-            <div className="absolute -top-[14px] left-1/2 -translate-x-1/2">
-              <span className="bg-gray-900 text-white text-[11px] font-semibold px-3 py-1 rounded-full">
+          <div className="rounded-2xl border-2 border-gray-900 p-6 relative flex flex-col">
+            <div className="absolute -top-[13px] left-1/2 -translate-x-1/2">
+              <span className="bg-gray-900 text-white text-[11px] font-semibold px-3 py-1 rounded-full whitespace-nowrap">
                 Most popular
               </span>
             </div>
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-4">Pro</p>
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Pro</p>
             <div className="flex items-end gap-1 mb-1">
-              <span className="text-[48px] font-bold text-gray-900 tracking-tight leading-none">$19</span>
-              <span className="text-[14px] text-gray-400 mb-1.5">/month</span>
+              <span className="text-[40px] font-bold text-gray-900 tracking-tight leading-none">$19</span>
+              <span className="text-[13px] text-gray-400 mb-1.5">/mo</span>
             </div>
-            <p className="text-[13px] text-gray-400 mb-8">For teams that need more power.</p>
-            <ul className="space-y-3 mb-8">
-              {[
-                'Unlimited sync jobs',
-                '5-minute sync interval',
-                'Priority processing',
-                'Full sync logs',
-                'Email support',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-[14px] text-gray-700">
-                  <Check className="w-4 h-4 text-gray-900 flex-shrink-0" />
+            <p className="text-[12px] text-gray-400 mb-6">For power users who need real-time 2-way sync.</p>
+            <ul className="space-y-2.5 mb-8 flex-1">
+              {['10 sync connections', '5,000 rows / month', '5-minute sync interval', 'Bidirectional & Sheets → Notion', 'Priority support'].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-[13px] text-gray-700">
+                  <Check className="w-3.5 h-3.5 text-gray-900 flex-shrink-0 mt-0.5" />
                   {item}
                 </li>
               ))}
             </ul>
             <Link
-              href="/signup"
-              className="block w-full text-center bg-gray-900 text-white font-medium py-3 rounded-xl hover:bg-gray-800 transition-colors text-[13px]"
+              href="/pricing"
+              className="block w-full text-center bg-gray-900 text-white font-medium py-2.5 rounded-xl hover:bg-gray-800 transition-colors text-[13px]"
             >
-              Start Free
+              Upgrade to Pro
             </Link>
           </div>
+
+          {/* Business */}
+          <div className="rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Business</p>
+            <div className="flex items-end gap-1 mb-1">
+              <span className="text-[40px] font-bold text-gray-900 tracking-tight leading-none">$49</span>
+              <span className="text-[13px] text-gray-400 mb-1.5">/mo</span>
+            </div>
+            <p className="text-[12px] text-gray-400 mb-6">For teams with high-volume sync needs.</p>
+            <ul className="space-y-2.5 mb-8 flex-1">
+              {['Unlimited connections', '100,000 rows / month', '1-minute sync interval', 'Bidirectional sync', 'Priority support'].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-[13px] text-gray-600">
+                  <Check className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/pricing"
+              className="block w-full text-center bg-gray-900 text-white font-medium py-2.5 rounded-xl hover:bg-gray-800 transition-colors text-[13px]"
+            >
+              Upgrade to Business
+            </Link>
+          </div>
+
         </div>
+
+        <p className="text-center mt-8 text-[13px] text-gray-400">
+          Full pricing details on the <Link href="/pricing" className="underline hover:text-gray-700">pricing page</Link>
+        </p>
       </section>
 
       {/* ─── FAQ ─── */}
