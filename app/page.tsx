@@ -649,8 +649,8 @@ export default async function Home() {
               <div>
                 <p className="text-[11px] font-bold text-gray-900 uppercase tracking-widest mb-4">Legal</p>
                 <div className="space-y-2.5">
-                  <a href="#" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Terms</a>
-                  <a href="#" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Privacy</a>
+                  <Link href="/terms" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Terms</Link>
+                  <Link href="/privacy" className="block text-[13px] text-gray-500 hover:text-gray-900 transition-colors">Privacy</Link>
                 </div>
               </div>
               <div>
